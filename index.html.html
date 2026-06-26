@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>持續好運 KEEP LUCKON — 影音 × 行銷工作室</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0E0C3F;
+    --indigo:#211C8E;
+    --indigo-2:#2C27A8;
+    --flame:#EA3C1C;
+    --flame-soft:#FF6A45;
+    --paper:#F4F1E8;
+    --paper-ink:#16133A;
+    --mist:rgba(255,255,255,.62);
+    --line:rgba(234,60,28,.40);
+    --hud:'Space Mono',monospace;
+    --disp:'Chakra Petch','Noto Sans TC',sans-serif;
+    --body:'Noto Sans TC',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--body);
+    background:var(--indigo);
+    color:#fff;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--flame);color:#fff}
+
+  /* ---------- HUD top bar ---------- */
+  .hudbar{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:11px 20px;
+    font-family:var(--hud);font-size:11px;letter-spacing:.12em;
+    color:var(--mist);
+    background:linear-gradient(180deg,rgba(14,12,63,.92),rgba(14,12,63,0));
+    backdrop-filter:blur(2px);
+  }
+  .hudbar .rec{display:flex;align-items:center;gap:8px;color:#fff}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--flame);box-shadow:0 0 0 0 rgba(234,60,28,.6);animation:blink 1.6s infinite}
+  @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:.25}}
+  .hudbar .mid{display:none}
+  @media(min-width:680px){.hudbar .mid{display:block}}
+
+  /* ---------- shared frame brackets ---------- */
+  .bracket{position:absolute;width:34px;height:34px;border:2px solid var(--flame);pointer-events:none}
+  .bracket.tl{top:0;left:0;border-right:0;border-bottom:0}
+  .bracket.tr{top:0;right:0;border-left:0;border-bottom:0}
+  .bracket.bl{bottom:0;left:0;border-right:0;border-top:0}
+  .bracket.br{bottom:0;right:0;border-left:0;border-top:0}
+
+  .eyebrow{
+    font-family:var(--hud);font-size:12px;letter-spacing:.28em;
+    color:var(--flame);text-transform:uppercase;margin-bottom:18px;
+    display:inline-block;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;min-height:100svh;
+    display:flex;align-items:center;justify-content:center;
+    padding:120px 24px 80px;
+    background:
+      radial-gradient(120% 80% at 50% 20%,#2A24A0 0%,var(--indigo) 45%,var(--ink) 100%);
+    overflow:hidden;
+  }
+  /* scan lines */
+  .hero::before{
+    content:"";position:absolute;inset:0;
+    background:repeating-linear-gradient(180deg,rgba(255,255,255,.035) 0 1px,transparent 1px 4px);
+    pointer-events:none;
+  }
+  /* sweep arc echoing the card */
+  .sweep{position:absolute;width:78vmin;height:78vmin;border:1px solid var(--line);border-radius:50%;
+    top:50%;left:50%;transform:translate(-50%,-50%);opacity:.55}
+  .sweep::after{content:"";position:absolute;inset:14%;border:1px solid rgba(234,60,28,.18);border-radius:50%}
+
+  .viewfinder{
+    position:relative;z-index:2;max-width:860px;width:100%;
+    padding:clamp(34px,6vw,74px) clamp(22px,5vw,64px);
+    text-align:center;
+  }
+  .viewfinder .bracket{width:clamp(28px,5vw,46px);height:clamp(28px,5vw,46px)}
+  /* crosshair reticle */
+  .reticle{
+    position:absolute;top:-9px;left:50%;transform:translateX(-50%);
+    width:46px;height:46px;
+  }
+  .reticle svg{display:block;width:100%;height:100%}
+  .reticle line,.reticle circle{stroke:var(--flame);stroke-width:1.5;fill:none}
+
+  .hero .eyebrow{margin-bottom:26px}
+  .title-cn{
+    font-family:var(--disp);font-weight:900;
+    font-size:clamp(54px,13vw,138px);line-height:.92;letter-spacing:.02em;
+    text-shadow:0 0 38px rgba(234,60,28,.25);
+  }
+  .title-cn span{color:var(--flame)}
+  .title-en{
+    font-family:var(--disp);font-weight:500;
+    letter-spacing:clamp(.18em,2vw,.5em);
+    font-size:clamp(15px,3.4vw,30px);
+    color:var(--flame);margin-top:14px;padding-left:.5em;
+  }
+  .tagline{
+    font-size:clamp(16px,2.4vw,22px);font-weight:500;color:var(--mist);
+    margin:30px auto 0;max-width:30ch;line-height:1.7;
+  }
+  .cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:38px}
+  .btn{
+    font-family:var(--disp);font-weight:600;font-size:15px;letter-spacing:.04em;
+    padding:14px 26px;border:1.5px solid var(--flame);border-radius:2px;
+    transition:.25s;cursor:pointer;display:inline-flex;align-items:center;gap:9px;
+  }
+  .btn.solid{background:var(--flame);color:#fff}
+  .btn.solid:hover{background:var(--flame-soft);border-color:var(--flame-soft);transform:translateY(-2px)}
+  .btn.ghost{color:#fff;background:transparent}
+  .btn.ghost:hover{background:rgba(234,60,28,.14);transform:translateY(-2px)}
+
+  .ticker{
+    position:absolute;bottom:0;left:0;right:0;z-index:2;
+    border-top:1px solid var(--line);
+    overflow:hidden;white-space:nowrap;
+    font-family:var(--hud);font-size:12px;letter-spacing:.2em;color:var(--mist);
+    padding:12px 0;
+  }
+  .ticker div{display:inline-block;animation:scroll 22s linear infinite}
+  .ticker b{color:var(--flame);margin:0 18px}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* ---------- SERVICES ---------- */
+  .services{padding:clamp(80px,11vw,150px) 24px;background:var(--ink);position:relative}
+  .wrap{max-width:1120px;margin:0 auto}
+  .sec-head{margin-bottom:54px}
+  .sec-head h2{font-family:var(--disp);font-weight:700;font-size:clamp(30px,5.4vw,58px);line-height:1.05}
+  .sec-head p{color:var(--mist);margin-top:14px;max-width:46ch;line-height:1.7;font-size:15px}
+
+  /* services bento grid */
+  .grid{display:grid;grid-template-columns:1fr;gap:16px}
+  @media(min-width:620px){
+    .grid{grid-template-columns:1fr 1fr}
+    .hero-card{grid-column:1/-1}
+  }
+  @media(min-width:900px){
+    .grid{grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,minmax(190px,auto))}
+    .hero-card{grid-column:1 / span 2;grid-row:1 / span 2}
+  }
+  .card{
+    position:relative;padding:34px 28px 30px;
+    background:linear-gradient(160deg,rgba(44,39,168,.55),rgba(33,28,142,.25));
+    border:1px solid rgba(255,255,255,.10);border-radius:3px;
+    transition:.3s;overflow:hidden;
+  }
+  .card:hover{transform:translateY(-6px) scale(1.01);border-color:var(--line);background:linear-gradient(160deg,rgba(44,39,168,.85),rgba(33,28,142,.45))}
+  .card .code{font-family:var(--hud);font-size:12px;letter-spacing:.22em;color:var(--flame)}
+  .card h3{font-family:var(--disp);font-weight:700;font-size:26px;margin:14px 0 12px}
+  .card p{color:var(--mist);line-height:1.8;font-size:14.5px}
+
+  /* hero (flagship) tile — the "shot in the viewfinder" */
+  .hero-card{
+    display:flex;flex-direction:column;justify-content:flex-end;
+    padding:clamp(32px,3.5vw,52px);min-height:300px;
+    background:linear-gradient(150deg,rgba(46,41,176,.9),rgba(18,15,76,.55));
+  }
+  @media(max-width:619px){.hero-card{min-height:240px}}
+  .hero-card::before{content:"";position:absolute;top:-70px;right:-60px;
+    width:300px;height:300px;border:1px solid rgba(234,60,28,.28);border-radius:50%;pointer-events:none}
+  .hero-card::after{content:"";position:absolute;top:67px;right:79px;
+    width:0;height:0;border-left:22px solid rgba(234,60,28,.45);
+    border-top:13px solid transparent;border-bottom:13px solid transparent;pointer-events:none}
+  .hero-card h3{font-size:clamp(30px,4vw,46px);margin:14px 0 16px}
+  .hero-card p{font-size:clamp(15px,1.3vw,17px);max-width:44ch;line-height:1.85}
+  .hero-card .code,.hero-card h3,.hero-card p{position:relative;z-index:1}
+
+  /* wrappers now inert (scroll-jacking pin removed) */
+  .rack,.rack-sticky{display:contents}
+
+  /* A — sequential autofocus "scan": brackets lock in card-by-card as the grid arrives */
+  @media(prefers-reduced-motion:no-preference){
+    .grid .card.reveal.in:nth-child(1) .af{animation:afscan 1.1s ease .30s}
+    .grid .card.reveal.in:nth-child(2) .af{animation:afscan 1.1s ease .45s}
+    .grid .card.reveal.in:nth-child(3) .af{animation:afscan 1.1s ease .60s}
+    .grid .card.reveal.in:nth-child(4) .af{animation:afscan 1.1s ease .75s}
+    .grid .card.reveal.in:nth-child(5) .af{animation:afscan 1.1s ease .90s}
+  }
+  @keyframes afscan{0%{opacity:0;transform:scale(1.25)}35%{opacity:1;transform:scale(1)}68%{opacity:1}100%{opacity:0;transform:scale(1)}}
+
+  /* H — hover "rack focus" (desktop only): point at a card to focus it, dim the rest */
+  @media(hover:hover) and (prefers-reduced-motion:no-preference){
+    .grid:hover .card{filter:brightness(.5) saturate(.65);opacity:.66}
+    .grid .card:hover{filter:none;opacity:1;box-shadow:0 24px 58px rgba(0,0,0,.42);z-index:2}
+  }
+
+  /* ---------- MANIFESTO (paper flip) ---------- */
+  .manifesto{
+    background:var(--ink);
+    padding:clamp(80px,13vw,170px) 24px;position:relative;overflow:hidden;
+  }
+  .manifesto::before{content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(60% 50% at 50% 50%,rgba(234,60,28,.12),transparent 70%)}
+  .card-panel{
+    --dev-blur:7px;
+    position:relative;max-width:880px;margin:0 auto;overflow:hidden;
+    background:var(--paper);color:var(--paper-ink);
+    border-radius:20px;
+    padding:clamp(54px,8vw,104px) clamp(30px,6vw,80px);
+    box-shadow:0 44px 90px rgba(0,0,0,.5);
+    /* "undeveloped" — dark, flat, soft (exposure does the heavy lifting; blur is light) */
+    opacity:0;transform:scale(.985);
+    filter:brightness(.3) saturate(.25) contrast(1.15) blur(var(--dev-blur));
+    transition:opacity .9s ease,filter 1.5s ease,transform 1.5s cubic-bezier(.2,.8,.2,1);
+    will-change:filter,opacity,transform;
+  }
+  /* "developed" — bright, full colour, sharp */
+  .manifesto.in .card-panel{opacity:1;transform:none;filter:none}
+  @media(max-width:640px){.card-panel{--dev-blur:3px}}
+
+  /* inset, enlarged focus brackets that lock on after the photo develops */
+  .card-panel .bracket{width:34px;height:34px;border-width:2.5px;border-color:var(--flame)}
+  .card-panel .bracket.tl{top:22px;left:22px;--tx:-14px;--ty:-14px}
+  .card-panel .bracket.tr{top:22px;right:22px;--tx:14px;--ty:-14px}
+  .card-panel .bracket.bl{bottom:22px;left:22px;--tx:-14px;--ty:14px}
+  .card-panel .bracket.br{bottom:22px;right:22px;--tx:14px;--ty:14px}
+
+  @media(prefers-reduced-motion:no-preference){
+    .card-panel .bracket{opacity:0}
+    .manifesto.in .card-panel .bracket{animation:bracketlock .55s cubic-bezier(.18,1.5,.4,1) forwards}
+    .manifesto.in .card-panel .bracket.tl{animation-delay:1.5s}
+    .manifesto.in .card-panel .bracket.tr{animation-delay:1.58s}
+    .manifesto.in .card-panel .bracket.bl{animation-delay:1.66s}
+    .manifesto.in .card-panel .bracket.br{animation-delay:1.74s}
+  }
+  @keyframes bracketlock{0%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(1.35)}55%{opacity:1}100%{opacity:1;transform:translate(0,0) scale(1)}}
+  .manifesto .bracket{border-color:var(--flame)}
+  .manifesto .eyebrow{color:var(--flame)}
+  .manifesto .inner{max-width:840px;margin:0 auto;text-align:center}
+  .manifesto h2{
+    font-family:var(--disp);font-weight:900;line-height:1.08;
+    font-size:clamp(34px,7vw,76px);letter-spacing:.01em;
+  }
+  .manifesto h2 em{font-style:normal;color:var(--flame)}
+  .manifesto .lede{
+    margin:28px auto 0;max-width:42ch;font-size:clamp(16px,2.2vw,19px);
+    line-height:1.9;color:#43406b;
+  }
+
+  /* ---------- WORK ---------- */
+  .work{padding:clamp(80px,11vw,150px) 24px;background:var(--indigo);position:relative}
+  .work .note{font-family:var(--hud);font-size:11px;letter-spacing:.16em;color:var(--mist);margin-top:10px}
+
+  .modes{display:inline-flex;gap:5px;margin-top:30px;border:1px solid rgba(255,255,255,.16);border-radius:4px;padding:5px}
+  .modes button{background:transparent;color:var(--mist);border:0;padding:10px 18px;cursor:pointer;border-radius:2px;font-family:var(--hud);font-size:12px;letter-spacing:.12em;transition:.2s}
+  .modes button.active{background:var(--flame);color:#fff}
+  .modes button:hover:not(.active){color:#fff}
+
+  .tiles{display:grid;grid-template-columns:1fr;gap:16px;margin-top:30px}
+  @media(min-width:560px){.tiles{grid-template-columns:1fr 1fr}}
+  @media(min-width:900px){.tiles{grid-template-columns:repeat(4,1fr)}}
+
+  .tile{
+    position:relative;aspect-ratio:3/4;border-radius:3px;overflow:hidden;
+    border:1px solid rgba(255,255,255,.08);
+    display:flex;flex-direction:column;justify-content:flex-end;
+    padding:20px;cursor:pointer;
+    transition:transform .35s cubic-bezier(.2,1,.3,1),border-color .3s;
+  }
+  .tile.hide{display:none}
+  .tile-media{position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 0%,#2E29A6,#161258);transition:filter .45s ease}
+  .tile-media::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(180deg,rgba(255,255,255,.04) 0 1px,transparent 1px 5px)}
+  @media(hover:hover){
+    .tile-media{filter:blur(1.7px) saturate(.78)}
+    .tile:hover .tile-media{filter:none}
+  }
+  .tile .play{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:54px;height:54px;border:1.5px solid var(--flame);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;transition:.3s;z-index:3;
+  }
+  .tile .play::after{content:"";border-left:13px solid var(--flame);border-top:8px solid transparent;border-bottom:8px solid transparent;margin-left:3px}
+  .tile:hover{transform:translateY(-6px) scale(1.012);border-color:var(--line)}
+  .tile:hover .play{background:var(--flame);transform:translate(-50%,-50%) scale(1.08)}
+  .tile:hover .play::after{border-left-color:#fff}
+  .tile .meta{position:relative;z-index:4}
+  .tile .meta .cat{font-family:var(--disp);font-weight:600;font-size:16px}
+  .tile .meta .tc{font-family:var(--hud);font-size:11px;letter-spacing:.14em;color:var(--mist);margin-top:4px}
+
+  /* design mocks (live inside .tile-media so they pull-focus too) */
+  .mock{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2}
+  .m-pack .box{width:48%;height:56%;background:linear-gradient(160deg,#fff,#cfcceb);border-radius:3px;position:relative;box-shadow:0 16px 34px rgba(0,0,0,.42)}
+  .m-pack .box::before{content:"";position:absolute;left:0;right:0;top:44%;height:17%;background:var(--flame)}
+  .m-pack .box i{position:absolute;left:15%;top:13%;width:26%;height:7%;background:var(--indigo);border-radius:1px}
+  .m-poster{flex-direction:column;gap:8px;padding:0 24%}
+  .m-poster i{display:block;height:7px;width:100%;background:#fff;border-radius:2px}
+  .m-poster i.f{background:var(--flame);height:15px;width:82%}
+  .m-poster i.s{width:55%}
+  .m-poster .o{width:36px;height:36px;border:2px solid var(--flame);border-radius:50%;margin-top:8px}
+  .m-brand{flex-direction:column;gap:16px}
+  .m-brand .glyph{width:66px;height:66px;border:2px solid #fff;border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-weight:700;font-size:32px;color:#fff}
+  .m-brand .dots{display:flex;gap:9px}
+  .m-brand .dots b{width:17px;height:17px;border-radius:50%}
+  .m-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:9px;padding:24%}
+  .m-grid span{background:rgba(255,255,255,.88);border-radius:2px}
+  .m-grid span.f{background:var(--flame)}
+
+  /* ---------- autofocus brackets (shared signature) ---------- */
+  .focus-target{position:relative}
+  .af{position:absolute;width:22px;height:22px;border:2px solid var(--flame);opacity:0;z-index:6;pointer-events:none;
+    transition:opacity .2s ease,transform .4s cubic-bezier(.18,1.5,.4,1)}
+  .af.tl{top:13px;left:13px;border-right:0;border-bottom:0;transform:translate(-14px,-14px)}
+  .af.tr{top:13px;right:13px;border-left:0;border-bottom:0;transform:translate(14px,-14px)}
+  .af.bl{bottom:13px;left:13px;border-right:0;border-top:0;transform:translate(-14px,14px)}
+  .af.br{bottom:13px;right:13px;border-left:0;border-top:0;transform:translate(14px,14px)}
+  @media(hover:hover){
+    .focus-target:hover .af{opacity:1;transform:translate(0,0)}
+  }
+
+  /* ---------- shutter flash ---------- */
+  .shutter{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:300}
+  .shutter.fire{animation:shutter .17s ease-out}
+  @keyframes shutter{0%{opacity:0}14%{opacity:.82}100%{opacity:0}}
+
+  /* ---------- CONTACT ---------- */
+  .contact{padding:clamp(80px,11vw,150px) 24px;background:var(--ink);position:relative}
+  .contact-frame{
+    position:relative;max-width:900px;margin:0 auto;
+    border:1px solid var(--line);border-radius:4px;
+    padding:clamp(36px,6vw,68px);
+    background:linear-gradient(160deg,rgba(44,39,168,.35),rgba(14,12,63,.2));
+    text-align:center;
+  }
+  .contact-frame .reticle{top:-23px}
+  .contact h2{font-family:var(--disp);font-weight:900;font-size:clamp(32px,6vw,62px);line-height:1.05}
+  .contact .sub{color:var(--mist);margin-top:16px;font-size:16px;line-height:1.7}
+  .person{margin:38px 0 30px}
+  .person .role{font-family:var(--hud);font-size:12px;letter-spacing:.2em;color:var(--flame)}
+  .person .name{font-family:var(--disp);font-weight:700;font-size:30px;margin-top:8px}
+  .person .name span{font-weight:400;color:var(--mist);font-size:18px;margin-left:10px}
+  .channels{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+  .chan{
+    display:inline-flex;align-items:center;gap:9px;
+    padding:13px 22px;border:1.5px solid rgba(255,255,255,.22);border-radius:2px;
+    font-family:var(--disp);font-weight:500;font-size:15px;transition:.25s;
+  }
+  .chan svg{width:17px;height:17px;flex:none}
+  .chan:hover{border-color:var(--flame);background:rgba(234,60,28,.12);transform:translateY(-2px)}
+  .chan.line:hover{border-color:#06C755;background:rgba(6,199,85,.14)}
+
+  /* ---------- brief form ---------- */
+  .brief{max-width:680px;margin:50px auto 0}
+  .brief .blabel{font-family:var(--hud);font-size:12px;letter-spacing:.2em;color:var(--flame);text-align:center;display:block;margin-bottom:28px}
+  .field{margin-bottom:18px}
+  .field label{display:block;font-size:13px;letter-spacing:.04em;color:var(--mist);margin-bottom:8px;font-weight:500}
+  .field input,.field textarea,.field select{
+    width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.16);
+    border-radius:3px;padding:13px 15px;color:#fff;font-family:var(--body);font-size:15px;transition:.2s;
+  }
+  .field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,.35)}
+  .field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--flame);background:rgba(234,60,28,.07)}
+  .field textarea{min-height:118px;resize:vertical}
+  .field select{appearance:none;cursor:pointer}
+  .field select option{background:var(--ink);color:#fff}
+  .two{display:grid;grid-template-columns:1fr;gap:18px}
+  @media(min-width:520px){.two{grid-template-columns:1fr 1fr}}
+  .chips{display:flex;flex-wrap:wrap;gap:10px}
+  .chip{cursor:pointer}
+  .chip input{position:absolute;opacity:0;pointer-events:none}
+  .chip span{display:inline-block;padding:10px 16px;border:1.5px solid rgba(255,255,255,.2);border-radius:2px;font-family:var(--disp);font-weight:500;font-size:14px;transition:.2s}
+  .chip span:hover{border-color:var(--flame)}
+  .chip input:checked+span{background:var(--flame);border-color:var(--flame);color:#fff}
+  .brief .send{margin-top:12px;width:100%;justify-content:center}
+  .brief .hint{font-family:var(--hud);font-size:11px;letter-spacing:.1em;color:var(--mist);text-align:center;margin-top:16px;line-height:1.8}
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    background:var(--ink);border-top:1px solid var(--line);
+    padding:26px 22px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+    font-family:var(--hud);font-size:11px;letter-spacing:.14em;color:var(--mist);
+  }
+  footer .rec{display:flex;align-items:center;gap:8px;color:#fff}
+
+  /* ---------- focus-in on load ---------- */
+  @media(prefers-reduced-motion:no-preference){
+    .title-cn{animation:pullfocus 1.05s cubic-bezier(.2,.8,.2,1) both;animation-delay:.15s}
+    .title-en{animation:pullfocus 1.05s cubic-bezier(.2,.8,.2,1) both;animation-delay:.32s}
+    .hero .tagline{animation:pullfocus .9s ease-out both;animation-delay:.5s}
+    .hero .reticle svg{animation:afsnap 1s cubic-bezier(.2,1.3,.4,1) both}
+  }
+  @keyframes pullfocus{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  @keyframes afsnap{0%{transform:scale(1.9);opacity:0}55%{opacity:1}100%{transform:scale(1)}}
+
+  /* ---------- reveal ---------- */
+  /* ---------- pull-focus reveal (camera "focuses" each block on scroll) ---------- */
+  .reveal{opacity:0;filter:blur(12px);transform:translateY(26px) scale(.986);
+    transition:opacity .8s ease,filter .85s ease,transform .85s cubic-bezier(.2,.8,.2,1)}
+  .reveal.in{opacity:1;filter:blur(0);transform:none}
+  /* stagger grouped items so they focus in one-by-one */
+  .grid>.reveal:nth-child(2){transition-delay:.07s}
+  .grid>.reveal:nth-child(3){transition-delay:.14s}
+  .grid>.reveal:nth-child(4){transition-delay:.21s}
+  .grid>.reveal:nth-child(5){transition-delay:.12s}
+  .tiles>.reveal:nth-child(2){transition-delay:.06s}
+  .tiles>.reveal:nth-child(3){transition-delay:.12s}
+  .tiles>.reveal:nth-child(4){transition-delay:.18s}
+  .tiles>.reveal:nth-child(5){transition-delay:.06s}
+  .tiles>.reveal:nth-child(6){transition-delay:.12s}
+  .tiles>.reveal:nth-child(7){transition-delay:.18s}
+  .tiles>.reveal:nth-child(8){transition-delay:.24s}
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;scroll-behavior:auto!important;transition:none!important}
+    .reveal{opacity:1;transform:none;filter:none}
+    .manifesto .card-panel{opacity:1!important;transform:none!important;filter:none!important}
+  }
+</style>
+</head>
+<body>
+
+  <div class="hudbar">
+    <span class="rec"><span class="dot"></span>REC</span>
+    <span class="mid">KEEP LUCKON · 影音 × 行銷 創意製作工作室</span>
+    <span id="tc">00:00:00:00</span>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="sweep"></div>
+    <div class="viewfinder">
+      <span class="bracket tl"></span><span class="bracket tr"></span>
+      <span class="bracket bl"></span><span class="bracket br"></span>
+      <div class="reticle">
+        <svg viewBox="0 0 46 46">
+          <circle cx="23" cy="23" r="16"/>
+          <line x1="23" y1="1" x2="23" y2="11"/><line x1="23" y1="35" x2="23" y2="45"/>
+          <line x1="1" y1="23" x2="11" y2="23"/><line x1="35" y1="23" x2="45" y2="23"/>
+          <circle cx="23" cy="23" r="2.5" fill="var(--flame)"/>
+        </svg>
+      </div>
+      <span class="eyebrow">// 影音製作 · 產品行銷 · 活動規劃 · 社群經營 · 視覺設計</span>
+      <h1 class="title-cn">持續<span>好運</span></h1>
+      <div class="title-en">KEEP LUCKON</div>
+      <p class="tagline">把品牌故事，拍成觀眾願意看完、而且記得住的畫面。</p>
+      <div class="cta-row">
+        <a href="#services" class="btn solid">看看我們能做什麼</a>
+        <a href="#contact" class="btn ghost">聊聊你的案子 ↗</a>
+      </div>
+    </div>
+    <div class="ticker"><div>
+      <b>●</b>影音製作<b>●</b>產品行銷<b>●</b>活動規劃<b>●</b>社群經營<b>●</b>視覺設計<b>●</b>影音製作<b>●</b>產品行銷<b>●</b>活動規劃<b>●</b>社群經營<b>●</b>視覺設計<b>●</b>影音製作<b>●</b>產品行銷<b>●</b>活動規劃<b>●</b>社群經營<b>●</b>視覺設計<b>●</b>影音製作<b>●</b>產品行銷<b>●</b>活動規劃<b>●</b>社群經營<b>●</b>視覺設計<b>●</b>
+    </div></div>
+  </header>
+
+  <!-- SERVICES -->
+  <section class="services" id="services">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">// SERVICES</span>
+        <h2>我們做的<br>五件事</h2>
+        <p>從鏡頭到投放，一個團隊把策略、創意與執行串成一條線。你只要把想法交出來。</p>
+      </div>
+      <div class="rack">
+        <div class="rack-sticky">
+          <div class="grid">
+        <div class="card hero-card focus-target reveal">
+          <span class="af tl"></span><span class="af tr"></span><span class="af bl"></span><span class="af br"></span>
+          <div class="code">VID / 01 · 主力服務</div>
+          <h3>影音製作</h3>
+          <p>腳本、拍攝、後製一條龍。把抽象的品牌訊息，變成有節奏、有情緒、會被分享的畫面。</p>
+        </div>
+        <div class="card focus-target reveal">
+          <span class="af tl"></span><span class="af tr"></span><span class="af bl"></span><span class="af br"></span>
+          <div class="code">MKT / 02</div>
+          <h3>產品行銷</h3>
+          <p>不只追曝光。從受眾、訊息到投放策略，讓對的人在對的時刻，剛好遇見你的產品。</p>
+        </div>
+        <div class="card focus-target reveal">
+          <span class="af tl"></span><span class="af tr"></span><span class="af bl"></span><span class="af br"></span>
+          <div class="code">EVT / 03</div>
+          <h3>活動規劃</h3>
+          <p>從概念發想到現場執行，把一檔活動變成一段值得被拍下來、被記得的體驗。</p>
+        </div>
+        <div class="card focus-target reveal">
+          <span class="af tl"></span><span class="af tr"></span><span class="af bl"></span><span class="af br"></span>
+          <div class="code">SOC / 04</div>
+          <h3>社群經營</h3>
+          <p>穩定的內容節奏加上互動設計，讓帳號從「有在發」變成「有人追」。</p>
+        </div>
+        <div class="card focus-target reveal">
+          <span class="af tl"></span><span class="af tr"></span><span class="af bl"></span><span class="af br"></span>
+          <div class="code">VIS / 05</div>
+          <h3>視覺設計</h3>
+          <p>從包裝、主視覺到品牌識別，把抽象的品牌氣質變成看得見、拿得到的設計——讓品牌不只被聽見，也被記住。</p>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MANIFESTO (business card flips to its white back — aperture reveal) -->
+  <section class="manifesto">
+    <div class="card-panel">
+      <span class="bracket tl"></span><span class="bracket tr"></span>
+      <span class="bracket bl"></span><span class="bracket br"></span>
+      <div class="inner">
+        <span class="eyebrow">// 我們相信</span>
+        <h2>好內容，<br>不靠<em>運氣</em>。</h2>
+        <p class="lede">但當策略、創意與執行都對準同一個焦點，好運就會持續發生。這就是「持續好運」在做的事——把每一次拍攝、每一篇貼文、每一場活動，都對準你真正想達成的目標。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORK -->
+  <section class="work">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">// WORK</span>
+        <h2>我們拍的，<br>也設計的</h2>
+        <p class="note">// 影音製作 × 包裝視覺設計 — 以下為版型示意，之後換上實際作品</p>
+        <div class="modes">
+          <button class="active" data-filter="all">全部 ALL</button>
+          <button data-filter="video">影音 VIDEO</button>
+          <button data-filter="design">設計 DESIGN</button>
+        </div>
+      </div>
+      <div class="tiles">
+
+        <div class="tile focus-target reveal" data-cat="video">
+          <div class="tile-media"><div class="play"></div></div>
+          <span class="af tl"></span><span class="af tr"></span><span class="af bl"></span><span class="af br"></span>
+          <div class="meta"><div class="cat">品牌形象片</div><div class="tc">BRAND FILM · 02:14</div></div>
+        </div>
+        <div class="tile focus-target reveal" data-cat="video">
+          <div class="tile-media"><div class="play"></div></div>
+          <span class="af tl"></span><span class="af tr"></span><span class="af bl"></span><span class="af br"></span>
+          <div class="meta"><div class="cat">產品開箱</div><div class="tc">PRODUCT · 00:48</div></div>
+        </div>
+        <div class="tile focus-target reveal" data-cat="video">
+          <div class="tile-media"><div class="play"></div></div>
+          <span class="af tl"></span><span class="af tr"></span><span class="af bl"></span><span class="af br"></span>
+          <div class="meta"><div class="cat">活動紀錄</div><div class="tc">EVENT · 03:05</div></div>
+        </div>
+        <div class="tile focus-target reveal" data-cat="video">
+          <div class="tile-media"><div class="play"></div></div>
+          <span class="af tl"></span><span class="af tr"></span><span class="af bl"></span><span class="af br"></span>
+          <div class="meta"><div class="cat">社群短影音</div><div class="tc">REELS · 00:30</div></div>
+        </div>
+
+        <div class="tile focus-target reveal" data-cat="design">
+          <div class="tile-media"><div class="mock m-pack"><div class="box"><i></i></div></div></div>
+          <span class="af tl"></span><span class="af tr"></span><span class="af bl"></span><span class="af br"></span>
+          <div class="meta"><div class="cat">包裝設計</div><div class="tc">PACKAGING · 3D MOCKUP</div></div>
+        </div>
+        <div class="tile focus-target reveal" data-cat="design">
+          <div class="tile-media"><div class="mock m-poster"><i class="f"></i><i></i><i class="s"></i><div class="o"></div></div></div>
+          <span class="af tl"></span><span class="af tr"></span><span class="af bl"></span><span class="af br"></span>
+          <div class="meta"><div class="cat">主視覺設計</div><div class="tc">KEY VISUAL · POSTER</div></div>
+        </div>
+        <div class="tile focus-target reveal" data-cat="design">
+          <div class="tile-media"><div class="mock m-brand"><div class="glyph">K</div><div class="dots"><b style="background:var(--flame)"></b><b style="background:#fff"></b><b style="background:#5b56d6"></b></div></div></div>
+          <span class="af tl"></span><span class="af tr"></span><span class="af bl"></span><span class="af br"></span>
+          <div class="meta"><div class="cat">品牌識別</div><div class="tc">BRAND IDENTITY · LOGO</div></div>
+        </div>
+        <div class="tile focus-target reveal" data-cat="design">
+          <div class="tile-media"><div class="mock m-grid"><span></span><span class="f"></span><span></span><span></span></div></div>
+          <span class="af tl"></span><span class="af tr"></span><span class="af bl"></span><span class="af br"></span>
+          <div class="meta"><div class="cat">平面設計</div><div class="tc">GRAPHIC · EDM</div></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contact">
+    <div class="contact-frame reveal">
+      <span class="bracket tl"></span><span class="bracket tr"></span>
+      <span class="bracket bl"></span><span class="bracket br"></span>
+      <div class="reticle">
+        <svg viewBox="0 0 46 46">
+          <circle cx="23" cy="23" r="16"/>
+          <line x1="23" y1="1" x2="23" y2="11"/><line x1="23" y1="35" x2="23" y2="45"/>
+          <line x1="1" y1="23" x2="11" y2="23"/><line x1="35" y1="23" x2="45" y2="23"/>
+          <circle cx="23" cy="23" r="2.5" fill="var(--flame)"/>
+        </svg>
+      </div>
+      <span class="eyebrow">// 開拍</span>
+      <h2>準備好開機了嗎？</h2>
+      <p class="sub">把你的想法丟給我們，一起把它拍出來。</p>
+      <div class="person">
+        <div class="role">行銷經理 · MARKETING MANAGER</div>
+        <div class="name">梁筱愛<span>Ana</span></div>
+      </div>
+      <div class="channels">
+        <a class="chan" href="tel:+886922639292">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          0922-639-292
+        </a>
+        <a class="chan" href="https://instagram.com/keep.luckon" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          @keep.luckon
+        </a>
+        <a class="chan" href="mailto:keepluckon@gmail.com">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 6 10 7 10-7"/></svg>
+          keepluckon@gmail.com
+        </a>
+        <a class="chan line" href="#" onclick="return false;">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 5.69 2 10.2c0 4.03 3.58 7.41 8.41 8.05.33.07.78.22.89.5.1.26.07.66.03.92l-.14.86c-.04.26-.2 1.01.89.55s5.86-3.45 7.99-5.91C21.5 13.49 22 11.92 22 10.2 22 5.69 17.52 2 12 2z"/></svg>
+          加 LINE 洽詢
+        </a>
+      </div>
+    </div>
+
+    <div class="brief reveal">
+      <span class="blabel">// 或，填一張需求單</span>
+      <form action="https://formsubmit.co/keepluckon@gmail.com" method="POST">
+        <input type="hidden" name="_subject" value="持續好運官網 — 新合作需求 📸">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="true">
+        <div class="two">
+          <div class="field"><label>稱呼 / 公司名稱</label><input type="text" name="姓名 / 公司" required placeholder="你怎麼稱呼？"></div>
+          <div class="field"><label>Email</label><input type="email" name="Email" required placeholder="方便回覆你的信箱"></div>
+        </div>
+        <div class="two">
+          <div class="field"><label>聯絡電話（選填）</label><input type="tel" name="電話" placeholder="0900-000-000"></div>
+          <div class="field"><label>預算範圍（選填）</label>
+            <select name="預算範圍">
+              <option value="尚未確定">尚未確定</option>
+              <option value="1萬以下">1 萬以下</option>
+              <option value="1–5萬">1–5 萬</option>
+              <option value="5–10萬">5–10 萬</option>
+              <option value="10萬以上">10 萬以上</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>需要的服務（可複選）</label>
+          <div class="chips">
+            <label class="chip"><input type="checkbox" name="服務需求[]" value="影音製作"><span>影音製作</span></label>
+            <label class="chip"><input type="checkbox" name="服務需求[]" value="產品行銷"><span>產品行銷</span></label>
+            <label class="chip"><input type="checkbox" name="服務需求[]" value="活動規劃"><span>活動規劃</span></label>
+            <label class="chip"><input type="checkbox" name="服務需求[]" value="社群經營"><span>社群經營</span></label>
+            <label class="chip"><input type="checkbox" name="服務需求[]" value="視覺設計"><span>視覺設計</span></label>
+          </div>
+        </div>
+        <div class="field"><label>專案說明</label><textarea name="專案說明" required placeholder="簡單描述你的想法、預計時程，或想達成的目標⋯⋯"></textarea></div>
+        <button type="submit" class="btn solid send">送出需求單 ↗</button>
+        <p class="hint">// 送出後將直接寄到 KEEP LUCKON 信箱，我們會盡快與你聯繫</p>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <span class="rec"><span class="dot"></span>KEEP LUCKON</span>
+    <span>持續好運 · 影音 × 行銷 創意製作工作室</span>
+    <span>© 2026 ALL RIGHTS RESERVED</span>
+  </footer>
+
+  <div class="shutter"></div>
+
+<script>
+  // live timecode in HUD
+  const tc=document.getElementById('tc');
+  const start=Date.now();
+  setInterval(()=>{
+    const t=(Date.now()-start)/1000;
+    const h=String(Math.floor(t/3600)%24).padStart(2,'0');
+    const m=String(Math.floor(t/60)%60).padStart(2,'0');
+    const s=String(Math.floor(t)%60).padStart(2,'0');
+    const f=String(Math.floor((t%1)*25)).padStart(2,'0');
+    tc.textContent=`${h}:${m}:${s}:${f}`;
+  },40);
+
+  // scroll reveal
+  const io=new IntersectionObserver((es)=>{
+    es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{threshold:.18});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  // work mode filter (video / design / all)
+  const modeBtns=document.querySelectorAll('.modes button');
+  const tiles=document.querySelectorAll('.tile');
+  modeBtns.forEach(b=>b.addEventListener('click',()=>{
+    modeBtns.forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    const f=b.dataset.filter;
+    tiles.forEach(t=>t.classList.toggle('hide',!(f==='all'||t.dataset.cat===f)));
+  }));
+
+  // shutter flash on "shoot" (tile click)
+  const shutter=document.querySelector('.shutter');
+  const reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  tiles.forEach(t=>t.addEventListener('click',()=>{
+    if(reduce) return;
+    shutter.classList.remove('fire');
+    void shutter.offsetWidth;
+    shutter.classList.add('fire');
+  }));
+
+  // aperture (iris) reveal — watch the CARD itself, fire only when it's actually on screen
+  const mani=document.querySelector('.manifesto');
+  const maniCard=document.querySelector('.manifesto .card-panel');
+  if(mani && maniCard){
+    const mo=new IntersectionObserver((es)=>{
+      es.forEach(e=>{if(e.isIntersecting){mani.classList.add('in');mo.unobserve(e.target);}});
+    },{threshold:0.45});
+    mo.observe(maniCard);
+  }
+
+  // rack-focus is now hover-driven (CSS only) + sequential AF-scan on reveal — no scroll JS needed
+</script>
+</body>
+</html>
